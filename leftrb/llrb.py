@@ -17,6 +17,9 @@ http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf
 by Robert Sedgewick of Princeton University.
 """
 
+from leftrb.bst import BinarySearchTree
+
+
 __all__ = ['LeftRB']
 
 RED = True
@@ -28,61 +31,6 @@ def is_red(h):
     Is the node (h) red?
     """
     return isinstance(h, LeftRB.Node) and h.color == RED
-
-
-class BinarySearchTree(object):
-    """
-    Basic unbalanced (inefficient) search tree.
-    """
-    root = None
-
-    class Node(object):
-        """
-        BST tree node.
-        """
-        left = right = None
-
-        def __init__(self, key, val=None):
-            self.key = key
-            self.val = val
-
-    def search(self, key):
-        """
-        Search the tree with a key. Return a value or None.
-        """
-        x = self.root
-        while x is not None:
-            if x.key == key:
-                return x.val if x.val is not None else x.key
-            elif key < x.key:
-                x = x.left
-            elif x.key < key:
-                x = x.right
-        return None
-
-    def insert(self, key, value=None):
-        """
-        Insert a key with optional value into tree.
-        """
-        self.root = self._insert(self.root, key, value)
-        self.root.color = BLACK
-
-    @classmethod
-    def _insert(cls, h, key, value=None):
-        """
-        Insert a node (h) node recursively.
-        """
-        if h is None:
-            return cls.Node(key, value)
-
-        if h.key == key:
-            h.val = value
-        elif key < h.key:
-            h.left = cls._insert(h.left, key, value)
-        else:
-            h.right = cls._insert(h.right, key, value)
-
-        return h
 
 
 class LeftRB(BinarySearchTree, object):
@@ -103,6 +51,13 @@ class LeftRB(BinarySearchTree, object):
         def __init__(self, key, val=None):
             super(self.__class__, self).__init__(key, val)
             self.color = RED  # new nodes are always red
+
+    def insert(self, key, value=None):
+        """
+        Insert a key with optional value into tree.
+        """
+        self.root = self._insert(self.root, key, value)
+        self.root.color = BLACK
 
     @classmethod
     def _insert(cls, h, key, value=None):
@@ -192,6 +147,9 @@ def test_random():
 
     print("All passed: %s" % allpass)
     return allpass
+
+
+del BinarySearchTree
 
 
 if __name__ == '__main__':

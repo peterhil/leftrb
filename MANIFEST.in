@@ -1,4 +1,4 @@
 include LICENSE
 include README*
 include setup.py
-include llrb.py
+recursive-include leftrb *.py
