@@ -17,7 +17,7 @@ http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf
 by Robert Sedgewick of Princeton University.
 """
 
-from leftrb.bst import BinarySearchTree
+from bst import BinarySearchTree
 
 
 __all__ = ['LeftRB']
@@ -129,6 +129,7 @@ class LeftRB(BinarySearchTree, object):
 
 def test_random():
     import random
+    from bst import BinarySearchTree
 
     allpass = True
     for cls in [BinarySearchTree, LeftRB]:
@@ -149,8 +150,7 @@ def test_random():
     return allpass
 
 
-del BinarySearchTree
-
-
 if __name__ == '__main__':
     test_random()
+else:
+    del BinarySearchTree
