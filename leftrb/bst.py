@@ -31,7 +31,13 @@ class BinarySearchTree(object):
         """
         Search the tree with a key. Return a value or None.
         """
-        x = self.root
+        return self._search(self.root, key)
+
+    @staticmethod
+    def _search(x, key):
+        """
+        Search the subtree below node (x) with a key. Return a value or None.
+        """
         while x is not None:
             if x.key == key:
                 return x.val if x.val is not None else x.key
