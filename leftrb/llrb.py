@@ -17,6 +17,7 @@ http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf
 by Robert Sedgewick of Princeton University.
 """
 
+import sys
 from bst import BinarySearchTree
 
 
@@ -31,6 +32,13 @@ def is_red(h):
     Is the node (h) red?
     """
     return isinstance(h, LeftRB.Node) and h.color == RED
+
+
+def is_black(h):
+    """
+    Is the node (h) black?
+    """
+    return not is_red(h)
 
 
 class LeftRB(BinarySearchTree, object):
@@ -51,16 +59,101 @@ class LeftRB(BinarySearchTree, object):
         def __init__(self, key, val=None):
             super(self.__class__, self).__init__(key, val)
             self.color = RED  # new nodes are always red
+            self.N = 1
+            self.height = 1
+
+        def __repr__(self):
+            return "<{0} at {1}, key={2}, value={3}, color={4}, N={5}, height={6}>".format(
+                self.__class__.__name__,
+                id(self),
+                self.key,
+                self.val,
+                'red' if is_red(self) else 'black',
+                self.N,
+                self.height
+            )
+
+    def is_empty(self):
+        """
+        Is the tree empty?
+        """
+        return self.root is None
+
+    def __contains__(self, key):
+        """
+        Does the tree contain key?
+        """
+        return self.search(key) is not None
+
+    @classmethod
+    def _contains(cls, x, key):
+        return cls._search(x, key) is not None
+
+    def __len__(self):
+        """
+        Number of nodes in the tree.
+        """
+        return self._size(self.root)
+
+    @staticmethod
+    def _size(x):
+        """
+        Number of nodes in the tree below node (x).
+        """
+        return 0 if x is None else x.N
+
+    def height(self):
+        """
+        Height of the tree.
+        """
+        return self._height(self.root)
+
+    @staticmethod
+    def _height(x):
+        """
+        The height of the tree below node (x).
+        """
+        return 0 if x is None else x.height
+
+    def min(self):
+        """
+        Smallest node in the tree.
+        """
+        return None if self.root is None else self._min(self.root)
+
+    @classmethod
+    def _min(cls, x):
+        """
+        Smallest node in the subtree below node (x).
+        """
+        return x.key if x.left is None else cls._min(x.left)
+
+    def max(self):
+        """
+        Largest node in the tree.
+        """
+        return None if self.root is None else self._max(self.root)
+
+    @classmethod
+    def _max(cls, x):
+        """
+        Largest node in the subtree below node (x).
+        """
+        return x.key if x.right is None else cls._max(x.right)
 
     def insert(self, key, value=None):
         """
-        Insert a key with optional value into tree.
+        Insert a key with optional value into the tree.
         """
         self.root = self._insert(self.root, key, value)
         self.root.color = BLACK
 
     @classmethod
     def _insert(cls, h, key, value=None):
+        """
+        Recursively insert a node with key and optional value
+        into the tree below node (h).
+        """
         if h is None:
             return cls.Node(key, value)
 
@@ -70,12 +163,104 @@ class LeftRB(BinarySearchTree, object):
 
         h = super(cls, cls)._insert(h, key, value)
 
-        if is_red(h.right) and not is_red(h.left):
+        if is_red(h.right) and is_black(h.left):
             h = cls._rotate_left(h)
-        if is_red(h.left) and is_red(h.left.left):
+        if is_red(h.left) and h.left and is_red(h.left.left):
             h = cls._rotate_right(h)
 
-        return h
+        return cls._setN(h)
+
+    def delete(self, key):
+        """
+        Delete a node with the given key from the tree.
+        """
+        if key not in self:
+            sys.stderr.write("Tree does not contain key '{0}'.".format(key))
+            return False
+
+        if is_black(self.root.left) and is_black(self.root.right):
+            self.root.color = RED
+
+        self.root = self._delete(self.root, key)
+
+        if not self.is_empty():
+            self.root.color = BLACK
+
+    def _delete(self, h, key):
+        """
+        Delete a node with the given key (recursively) from the tree below node (h).
+        """
+        assert self._contains(h, key)
+
+        if key < h.key:
+            if is_black(h.left) and h.left and is_black(h.left.left):
+                h = self._move_red_left(h)
+            h.left = self._delete(h.left, key)
+        else:
+            if is_red(h.left):
+                h = self._rotate_right(h)
+
+            if key == h.key and h.right is None:
+                return None
+
+            if is_black(h.right) and h.right and is_black(h.right.left):
+                h = self._move_red_right(h)
+
+            if key == h.key:
+                h.value = self._search(h.right, self._min(h.right))
+                h.key = self._min(h.right)
+                h.right = self._delete_min(h.right)
+            else:
+                h.right = self._delete(h.right, key)
+
+        return self._fix_up(h)
+
+    def delete_min(self):
+        """
+        Delete the smallest node while maintaining balance.
+        """
+        self.root = self._delete_min(self.root)
+        self.root.color = BLACK
+
+    def _delete_min(cls, h):
+        """
+        Delete the smallest node on the (left) subtree below node(h)
+        while maintaining balance.
+        """
+        if h.left is None:
+            return None
+
+        if is_black(h.left) and h.left and is_black(h.left.left):
+            h = cls._move_red_left(h)
+
+        h.left = cls._delete_min(h.left)
+
+        return cls._fix_up(h)
+
+    def delete_max(self):
+        """
+        Delete the largest node while maintaining balance.
+        """
+        self.root = self._delete_max(self.root)
+        self.root.color = BLACK
+
+    def _delete_max(cls, h):
+        """
+        Delete the largest node on the (right) subtree below node(h)
+        while maintaining balance.
+        """
+        if is_red(h.left):
+            h = rotateRight(h)
+
+        if h.right is None:
+            return None
+
+        if is_black(h.right) and h.right and is_black(h.right.left):
+            h = cls._move_red_right(h)
+
+        h.right = cls._delete_max(h.right)
+
+        return fixUp(h)
 
     @staticmethod
     def _flip_colors(h):
@@ -125,6 +310,57 @@ class LeftRB(BinarySearchTree, object):
         x.color = h.color
         h.color = RED
         return x
+
+    @classmethod
+    def _move_red_left(cls, h):
+        """
+        Assuming that h is red and both h.left and h.left.left
+        are black, make h.left or one of its children red.
+        """
+        cls._flip_colors(h)
+        if h.right and is_red(h.right.left):
+            h.right = cls._rotate_right(h.right)
+            h = cls._rotate_left(h)
+            cls._flip_colors(h)
+        return h
+
+    @classmethod
+    def _move_red_right(cls, h):
+        """
+        Assuming that h is red and both h.right and h.right.left
+        are black, make h.right or one of its children red.
+        """
+        cls._flip_colors(h)
+        if h.left and is_red(h.left.left):
+            h = cls._rotate_right(h)
+            cls._flip_colors(h)
+        return h
+
+    @classmethod
+    def _fix_up(cls, h):
+        """
+        Fix the Left-leaning Red-black tree properties
+        with upto two rotations and a possible color flip.
+        """
+        if is_red(h.right):
+            h = cls._rotate_left(h)
+
+        if is_red(h.left) and h.left and is_red(h.left.left):
+            h = cls._rotate_right(h)
+
+        if is_red(h.left) and is_red(h.right):
+            cls._flip_colors(h)
+
+        return cls._setN(h)
+
+    @classmethod
+    def _setN(cls, h):
+        """
+        Update size and height of node (h).
+        """
+        h.N = cls._size(h.left) + cls._size(h.right) + 1
+        h.height = max(cls._height(h.left), cls._height(h.right)) + 1
+        return h
 
 
 del BinarySearchTree
