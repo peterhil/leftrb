@@ -127,30 +127,4 @@ class LeftRB(BinarySearchTree, object):
         return x
 
 
-def test_random():
-    import random
-    from bst import BinarySearchTree
-
-    allpass = True
-    for cls in [BinarySearchTree, LeftRB]:
-        print("Testing %s:" % cls.__name__),
-        t = cls()
-        r = random.sample(xrange(1000), 900)
-        for x in r:
-            t.insert(x)
-        res = [t.search(x) for x in r]
-        try:
-            assert r == res
-            print('PASS')
-        except AssertionError, e:
-            print("FAIL: lists are not equal!\n%s" % e)
-            allpass = False
-
-    print("All passed: %s" % allpass)
-    return allpass
-
-
-if __name__ == '__main__':
-    test_random()
-else:
-    del BinarySearchTree
+del BinarySearchTree
