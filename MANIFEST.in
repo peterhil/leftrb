@@ -1,4 +1,4 @@
-include LICENSE
+include COPYING*
 include README*
 include setup.py
 include runtests.py

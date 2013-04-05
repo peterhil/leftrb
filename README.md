@@ -1,8 +1,14 @@
 # Leftrb/LLRB
 
-LLRB is a Left-Leaning Red-Black (LLRB) implementation of 2–3 balanced binary
-search trees in Python. This is a straightforward port of the code presented
-by Robert Sedgewick in his paper.
+Leftrb is a Left-Leaning Red-Black (LLRB) implementation of 2–3 balanced binary
+search trees in Python.
+
+This is a straightforward port of the Java code presented by Robert Sedgewick in
+[his paper]((http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf)) and in the
+book [Algorithms, 4th Edition](http://algs4.cs.princeton.edu/home/) written
+together with Kevin Wayne. By their permission, the [original GPL v3 licensed Java
+code](http://www.cs.princeton.edu/~rs/talks/LLRB/Java/RedBlackBST.java)
+is ported to Python as this LGPL v3 licensed software library.
 
 ## Overview
 
@@ -51,5 +57,4 @@ or from Github source:
 ## About
 
 Leftrb/LLRB was written by [Peter Hillerström](http://composed.nu/peterhil/).  
-
 Follow me on Twitter [@peterhil](http://www.twitter.com/peterhil)!
