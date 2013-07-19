@@ -71,8 +71,14 @@ class LeftRB(BinarySearchTree, object):
         def __init__(self, key, val=None):
             super(self.__class__, self).__init__(key, val)
             self.color = RED  # new nodes are always red
-            self.N = 1
             self.height = 1
+
+        def size(self):
+            """
+            Number of nodes in the subtree below node.
+            """
+            # TODO Cache into self.N
+            return 1 + sum(map(lambda child: child.size(), filter(None, [self.left, self.right])))
 
         def __repr__(self):
             return "<{0} at {1}, key={2}, value={3}, color={4}, N={5}, height={6}>".format(
@@ -105,14 +111,7 @@ class LeftRB(BinarySearchTree, object):
         """
         Number of nodes in the tree.
         """
-        return self._size(self.root)
-
-    @staticmethod
-    def _size(x):
-        """
-        Number of nodes in the tree below node (x).
-        """
-        return 0 if x is None else x.N
+        return 0 if not self.root else self.root.size()
 
     def height(self):
         """
@@ -166,7 +165,7 @@ class LeftRB(BinarySearchTree, object):
         if is_red(h.left) and h.left and is_red(h.left.left):
             h = cls._rotate_right(h)
 
-        return cls._setN(h)
+        return cls._setHeight(h)
 
     def delete(self, key):
         """
@@ -349,14 +348,13 @@ class LeftRB(BinarySearchTree, object):
         if is_red(h.left) and is_red(h.right):
             cls._flip_colors(h)
 
-        return cls._setN(h)
+        return cls._setHeight(h)
 
     @classmethod
-    def _setN(cls, h):
+    def _setHeight(cls, h):
         """
         Update size and height of node (h).
         """
-        h.N = cls._size(h.left) + cls._size(h.right) + 1
         h.height = max(cls._height(h.left), cls._height(h.right)) + 1
         return h
 

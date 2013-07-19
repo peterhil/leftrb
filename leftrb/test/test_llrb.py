@@ -26,6 +26,10 @@ class TestLeftRB(Base):
 
     items = [5,1,3]
 
+    def test_len(self):
+        t = fill_tree(self.items)
+        assert len(t) == len(self.items)
+
     def test_min(self):
         t = fill_tree(self.items)
         assert t.min() == min(self.items)
