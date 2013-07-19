@@ -4,6 +4,7 @@
 from __future__ import absolute_import
 
 import pytest
+import math
 import random
 
 from leftrb.test.test_bst import TestBST as Base
@@ -21,7 +22,7 @@ def fill_tree(items):
 
 class TestLeftRB(Base):
 
-    items = [5, 1, 3, 6, 2, 7]
+    items = [5, 1, 3, 6]
 
     def test_search(self):
         t = fill_tree(self.items)
@@ -37,6 +38,13 @@ class TestLeftRB(Base):
         t = fill_tree(self.items)
         assert len(t) == len(self.items)
 
+    def test_height(self):
+        for n in range(16):
+            items = random.sample(range(n), n)
+            t = fill_tree(items)
+            print("Items: {0}".format(items))
+            assert t.height() <= int(math.ceil(2 * math.log(n + 1, 2)))
+
     def test_min(self):
         t = fill_tree(self.items)
         assert t.min() == min(self.items)
@@ -46,7 +54,7 @@ class TestLeftRB(Base):
         assert t.max() == max(self.items)
 
     def test_delete(self):
-        t = fill_tree(random.sample(xrange(100), 90))
+        t = fill_tree(random.sample(range(100), 90))
 
         key = random.randint(0, 999)
         value = str(key)

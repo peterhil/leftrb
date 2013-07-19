@@ -16,7 +16,7 @@ class TestBST(object):
 
     def test_insert_and_search(self):
         t = Tree()
-        r = random.sample(xrange(1000), 900)
+        r = random.sample(range(1000), 900)
         for x in r:
             t.insert(x)
         res = [t.search(x) for x in r]

@@ -51,6 +51,24 @@ class BinarySearchTree(object):
                 return self.right.search(key)
             return None
 
+        def insert(self, key, value=None):
+            """
+            Insert a node recursively.
+            """
+            if self.key == key:
+                self.val = value
+            elif key < self.key:
+                if self.left is None:
+                    self.left = self.__class__(key, value)
+                else:
+                    self.left = self.left.insert(key, value)
+            else:
+                if self.right is None:
+                    self.right = self.__class__(key, value)
+                else:
+                    self.right = self.right.insert(key, value)
+            return self
+
         def min(self):
             """
             Smallest node in the subtree.
@@ -67,27 +85,11 @@ class BinarySearchTree(object):
         """
         Search the tree with a key. Return a value or None.
         """
-        return self.root.search(key)
+        return self.root.search(key) if self.root is not None else None
 
     def insert(self, key, value=None):
         """
         Insert a key with optional value into tree.
         """
-        self.root = self._insert(self.root, key, value)
+        self.root = self.Node(key, value) if self.root is None else self.root.insert(key, value)
 
-    @classmethod
-    def _insert(cls, h, key, value=None):
-        """
-        Insert a node (h) node recursively.
-        """
-        if h is None:
-            return cls.Node(key, value)
-
-        if h.key == key:
-            h.val = value
-        elif key < h.key:
-            h.left = cls._insert(h.left, key, value)
-        else:
-            h.right = cls._insert(h.right, key, value)
-
-        return h

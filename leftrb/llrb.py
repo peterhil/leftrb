@@ -30,7 +30,7 @@ by Robert Sedgewick of Princeton University.
 """
 
 import sys
-from bst import BinarySearchTree
+from leftrb.bst import BinarySearchTree
 
 
 __all__ = ['LeftRB']
@@ -73,6 +73,23 @@ class LeftRB(BinarySearchTree, object):
             self.color = RED  # new nodes are always red
             self.height = 1
 
+        def insert(self, key, value=None):
+            """
+            Recursively insert a node with key and optional value into the tree below.
+            """
+            # Move this to the end to get 2-3 trees
+            if is_red(self.left) and is_red(self.right):
+                LeftRB._flip_colors(self)
+
+            self = super(LeftRB.Node, self).insert(key, value)
+
+            if is_red(self.right) and is_black(self.left):
+                self = LeftRB._rotate_left(self)
+            if is_red(self.left) and self.left and is_red(self.left.left):
+                self = LeftRB._rotate_right(self)
+
+            return LeftRB._setHeight(self)
+
         def size(self):
             """
             Number of nodes in the subtree below node.
@@ -81,13 +98,12 @@ class LeftRB(BinarySearchTree, object):
             return 1 + sum(map(lambda child: child.size(), filter(None, [self.left, self.right])))
 
         def __repr__(self):
-            return "<{0} at {1}, key={2}, value={3}, color={4}, N={5}, height={6}>".format(
+            return "<{0} at {1}, key={2}, value={3}, color={4}, height={5}>".format(
                 self.__class__.__name__,
                 id(self),
                 self.key,
                 self.val,
                 'red' if is_red(self) else 'black',
-                self.N,
                 self.height
             )
 
@@ -107,20 +123,13 @@ class LeftRB(BinarySearchTree, object):
         """
         Number of nodes in the tree.
         """
-        return 0 if not self.root else self.root.size()
+        return 0 if self.root is None else self.root.size()
 
     def height(self):
         """
         Height of the tree.
         """
-        return self._height(self.root)
-
-    @staticmethod
-    def _height(x):
-        """
-        The height of the tree below node (x).
-        """
-        return 0 if x is None else x.height
+        return 0 if self.root is None else self.root.height
 
     def min(self):
         """
@@ -138,30 +147,8 @@ class LeftRB(BinarySearchTree, object):
         """
         Insert a key with optional value into the tree.
         """
-        self.root = self._insert(self.root, key, value)
+        super(LeftRB, self).insert(key, value)
         self.root.color = BLACK
-
-    @classmethod
-    def _insert(cls, h, key, value=None):
-        """
-        Recursively insert a node with key and optional value
-        into the tree below node (h).
-        """
-        if h is None:
-            return cls.Node(key, value)
-
-        # Move this to the end to get 2-3 trees
-        if is_red(h.left) and is_red(h.right):
-            cls._flip_colors(h)
-
-        h = super(cls, cls)._insert(h, key, value)
-
-        if is_red(h.right) and is_black(h.left):
-            h = cls._rotate_left(h)
-        if is_red(h.left) and h.left and is_red(h.left.left):
-            h = cls._rotate_right(h)
-
-        return cls._setHeight(h)
 
     def delete(self, key):
         """
@@ -200,8 +187,8 @@ class LeftRB(BinarySearchTree, object):
                 h = self._move_red_right(h)
 
             if key == h.key:
-                h.value = self._search(h.right, self._min(h.right))
-                h.key = self._min(h.right)
+                h.value = h.right.search(h.right.min())
+                h.key = h.right.min()
                 h.right = self._delete_min(h.right)
             else:
                 h.right = self._delete(h.right, key)
@@ -351,7 +338,7 @@ class LeftRB(BinarySearchTree, object):
         """
         Update size and height of node (h).
         """
-        h.height = max(cls._height(h.left), cls._height(h.right)) + 1
+        h.height = max(h.left and h.left.height or 0, h.right and h.right.height or 0) + 1
         return h
 
 
