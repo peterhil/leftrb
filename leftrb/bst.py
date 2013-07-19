@@ -39,6 +39,18 @@ class BinarySearchTree(object):
             self.key = key
             self.val = val
 
+        def min(self):
+            """
+            Smallest node in the subtree.
+            """
+            return self.key if self.left is None else self.left.min()
+
+        def max(self):
+            """
+            Largest node in the subtree.
+            """
+            return self.key if self.right is None else self.right.max()
+
     def search(self, key):
         """
         Search the tree with a key. Return a value or None.

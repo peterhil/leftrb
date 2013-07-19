@@ -131,27 +131,13 @@ class LeftRB(BinarySearchTree, object):
         """
         Smallest node in the tree.
         """
-        return None if self.root is None else self._min(self.root)
-
-    @classmethod
-    def _min(cls, x):
-        """
-        Smallest node in the subtree below node (x).
-        """
-        return x.key if x.left is None else cls._min(x.left)
+        return None if self.root is None else self.root.min()
 
     def max(self):
         """
         Largest node in the tree.
         """
-        return None if self.root is None else self._max(self.root)
-
-    @classmethod
-    def _max(cls, x):
-        """
-        Largest node in the subtree below node (x).
-        """
-        return x.key if x.right is None else cls._max(x.right)
+        return None if self.root is None else self.root.max()
 
     def insert(self, key, value=None):
         """
