@@ -39,6 +39,18 @@ class BinarySearchTree(object):
             self.key = key
             self.val = val
 
+        def search(self, key):
+            """
+            Search the subtree for a key. Return a value or None.
+            """
+            if self.key == key:
+                return self.val if self.val is not None else self.key
+            elif key < self.key and self.left:
+                return self.left.search(key)
+            elif self.key < key and self.right:
+                return self.right.search(key)
+            return None
+
         def min(self):
             """
             Smallest node in the subtree.
@@ -55,21 +67,7 @@ class BinarySearchTree(object):
         """
         Search the tree with a key. Return a value or None.
         """
-        return self._search(self.root, key)
-
-    @staticmethod
-    def _search(x, key):
-        """
-        Search the subtree below node (x) with a key. Return a value or None.
-        """
-        while x is not None:
-            if x.key == key:
-                return x.val if x.val is not None else x.key
-            elif key < x.key:
-                x = x.left
-            elif x.key < key:
-                x = x.right
-        return None
+        return self.root.search(key)
 
     def insert(self, key, value=None):
         """

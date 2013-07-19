@@ -21,7 +21,17 @@ def fill_tree(items):
 
 class TestLeftRB(Base):
 
-    items = [5,1,3]
+    items = [5, 1, 3, 6, 2, 7]
+
+    def test_search(self):
+        t = fill_tree(self.items)
+        needle = max(self.items)
+        assert t.search(needle) == needle
+
+    def test_in(self):
+        t = fill_tree(self.items)
+        needle = max(self.items)
+        assert needle in t
 
     def test_len(self):
         t = fill_tree(self.items)

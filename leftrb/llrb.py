@@ -103,10 +103,6 @@ class LeftRB(BinarySearchTree, object):
         """
         return self.search(key) is not None
 
-    @classmethod
-    def _contains(cls, x, key):
-        return cls._search(x, key) is not None
-
     def __len__(self):
         """
         Number of nodes in the tree.
@@ -187,7 +183,7 @@ class LeftRB(BinarySearchTree, object):
         """
         Delete a node with the given key (recursively) from the tree below node (h).
         """
-        assert self._contains(h, key)
+        assert h.search(key) is not None
 
         if key < h.key:
             if is_black(h.left) and h.left and is_black(h.left.left):
