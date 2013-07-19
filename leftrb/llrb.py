@@ -131,12 +131,35 @@ class LeftRB(BinarySearchTree, object):
             self.left.color = not self.left.color
             self.right.color = not self.right.color
 
+        def _move_red_left(self):
+            """
+            Assuming that h is red and both self.left and self.left.left
+            are black, make self.left or one of its children red.
+            """
+            self._flip_colors()
+            if self.right and is_red(self.right.left):
+                self.right = LeftRB._rotate_right(self.right)
+                self = LeftRB._rotate_left(self)
+                self._flip_colors()
+                return self
+
+        def _move_red_right(self):
+            """
+            Assuming that self is red and both self.right and self.right.left
+            are black, make self.right or one of its children red.
+            """
+            self._flip_colors()
+            if self.left and is_red(self.left.left):
+                self = LeftRB._rotate_right(self)
+                self._flip_colors()
+                return self
+
         def _setHeight(self):
             """
             Update height.
             """
             self.height = 1 + max(self.left and self.left.height or 0,
-                                  self.right and self.right.height or 0)
+                                      self.right and self.right.height or 0)
             return self
 
 
@@ -207,7 +230,7 @@ class LeftRB(BinarySearchTree, object):
 
         if key < h.key:
             if is_black(h.left) and h.left and is_black(h.left.left):
-                h = self._move_red_left(h)
+                h = h._move_red_left()
             h.left = self._delete(h.left, key)
         else:
             if is_red(h.left):
@@ -217,7 +240,7 @@ class LeftRB(BinarySearchTree, object):
                 return None
 
             if is_black(h.right) and h.right and is_black(h.right.left):
-                h = self._move_red_right(h)
+                h = h._move_red_right()
 
             if key == h.key:
                 h.value = h.right.search(h.right.min())
@@ -244,7 +267,7 @@ class LeftRB(BinarySearchTree, object):
             return None
 
         if is_black(h.left) and h.left and is_black(h.left.left):
-            h = cls._move_red_left(h)
+            h = h._move_red_left()
 
         h.left = cls._delete_min(h.left)
 
@@ -269,7 +292,7 @@ class LeftRB(BinarySearchTree, object):
             return None
 
         if is_black(h.right) and h.right and is_black(h.right.left):
-            h = cls._move_red_right(h)
+            h = h._move_red_right()
 
         h.right = cls._delete_max(h.right)
 
@@ -314,31 +337,6 @@ class LeftRB(BinarySearchTree, object):
         x.color = h.color
         h.color = RED
         return x
-
-    @classmethod
-    def _move_red_left(cls, h):
-        """
-        Assuming that h is red and both h.left and h.left.left
-        are black, make h.left or one of its children red.
-        """
-        h._flip_colors()
-        if h.right and is_red(h.right.left):
-            h.right = cls._rotate_right(h.right)
-            h = cls._rotate_left(h)
-            h._flip_colors()
-        return h
-
-    @classmethod
-    def _move_red_right(cls, h):
-        """
-        Assuming that h is red and both h.right and h.right.left
-        are black, make h.right or one of its children red.
-        """
-        h._flip_colors()
-        if h.left and is_red(h.left.left):
-            h = cls._rotate_right(h)
-            h._flip_colors()
-        return h
 
 
 del BinarySearchTree
