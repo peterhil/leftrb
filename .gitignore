@@ -3,3 +3,5 @@ dist/
 venv/
 MANIFEST
 leftrb.egg-info/
+.coverage
+.tox/
