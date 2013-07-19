@@ -23,7 +23,7 @@ from __future__ import with_statement
 from setuptools import setup, Command
 
 PACKAGE_NAME = 'leftrb'
-PACKAGE_VERSION = '0.1.2'
+PACKAGE_VERSION = '0.1.3'
 PACKAGES = ['leftrb']
 
 with open('README.md', 'r') as readme:
