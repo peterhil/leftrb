@@ -84,9 +84,9 @@ class LeftRB(BinarySearchTree, object):
             self = super(LeftRB.Node, self).insert(key, value)
 
             if is_red(self.right) and is_black(self.left):
-                self = LeftRB._rotate_left(self)
+                self = self._rotate_left()
             if is_red(self.left) and self.left and is_red(self.left.left):
-                self = LeftRB._rotate_right(self)
+                self = self._rotate_right()
 
             return self._setHeight()
 
@@ -113,10 +113,10 @@ class LeftRB(BinarySearchTree, object):
             with upto two rotations and a possible color flip.
             """
             if is_red(self.right):
-                self = LeftRB._rotate_left(self)
+                self = self._rotate_left()
 
             if is_red(self.left) and self.left and is_red(self.left.left):
-                self = LeftRB._rotate_right(self)
+                self = self._rotate_right()
 
             if is_red(self.left) and is_red(self.right):
                 self._flip_colors()
@@ -138,8 +138,8 @@ class LeftRB(BinarySearchTree, object):
             """
             self._flip_colors()
             if self.right and is_red(self.right.left):
-                self.right = LeftRB._rotate_right(self.right)
-                self = LeftRB._rotate_left(self)
+                self.right = self.right._rotate_right()
+                self = self._rotate_left()
                 self._flip_colors()
                 return self
 
@@ -150,9 +150,47 @@ class LeftRB(BinarySearchTree, object):
             """
             self._flip_colors()
             if self.left and is_red(self.left.left):
-                self = LeftRB._rotate_right(self)
+                self = self._rotate_right()
                 self._flip_colors()
                 return self
+
+        def _rotate_left(self):
+            """
+            Left rotate (right link of self)
+
+                   V         |          V <--left or right, red or black
+                   |         |          |
+            out<--(x)   <<< LEFT       (s) <--in
+                 // \        |         / \\  <--red
+               (s)   3       |        1   (x)
+               / \           |            / \
+              1   2          |           2   3
+            """
+            x       = self.right
+            self.right = x.left
+            x.left  = self
+            x.color = self.color
+            self.color = RED
+            return x
+
+        def _rotate_right(self):
+            """
+            Right rotate (left link of self)
+
+                   V         |          V <--left or right, red or black
+                   |         |          |
+            in--> (s)     RIGHT >>>    (x)-->out
+                 // \        |         / \\  <--red
+               (x)   3       |        1   (s)
+               / \           |            / \
+              1   2          |           2   3
+            """
+            x       = self.left
+            self.left  = x.right
+            x.right = self
+            x.color = self.color
+            self.color = RED
+            return x
 
         def _setHeight(self):
             """
@@ -234,7 +272,7 @@ class LeftRB(BinarySearchTree, object):
             h.left = self._delete(h.left, key)
         else:
             if is_red(h.left):
-                h = self._rotate_right(h)
+                h = h._rotate_right()
 
             if key == h.key and h.right is None:
                 return None
@@ -297,46 +335,6 @@ class LeftRB(BinarySearchTree, object):
         h.right = cls._delete_max(h.right)
 
         return fixUp(h)
-
-    @staticmethod
-    def _rotate_left(h):
-        """
-        Left rotate (right link of h)
-
-               V         |          V <--left or right, red or black
-               |         |          |
-        out<--(x)   <<< LEFT       (h) <--in
-             // \        |         / \\  <--red
-           (h)   3       |        1   (x)
-           / \           |            / \
-          1   2          |           2   3
-        """
-        x       = h.right
-        h.right = x.left
-        x.left  = h
-        x.color = h.color
-        h.color = RED
-        return x
-
-    @staticmethod
-    def _rotate_right(h):
-        """
-        Right rotate (left link of h)
-
-               V         |          V <--left or right, red or black
-               |         |          |
-        in--> (h)     RIGHT >>>    (x)-->out
-             // \        |         / \\  <--red
-           (x)   3       |        1   (h)
-           / \           |            / \
-          1   2          |           2   3
-        """
-        x       = h.left
-        h.left  = x.right
-        x.right = h
-        x.color = h.color
-        h.color = RED
-        return x
 
 
 del BinarySearchTree
