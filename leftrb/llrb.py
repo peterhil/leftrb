@@ -141,7 +141,7 @@ class LeftRB(BinarySearchTree, object):
                 self.right = self.right._rotate_right()
                 self = self._rotate_left()
                 self._flip_colors()
-                return self
+            return self
 
         def _move_red_right(self):
             """
@@ -152,7 +152,7 @@ class LeftRB(BinarySearchTree, object):
             if self.left and is_red(self.left.left):
                 self = self._rotate_right()
                 self._flip_colors()
-                return self
+            return self
 
         def _rotate_left(self):
             """
