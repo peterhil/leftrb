@@ -98,13 +98,15 @@ class LeftRB(BinarySearchTree, object):
             return 1 + sum(map(lambda child: child.size(), filter(None, [self.left, self.right])))
 
         def __repr__(self):
-            return "<{0} at {1}, key={2}, value={3}, color={4}, height={5}>".format(
+            return "<{0} at {1}, key={2}, value={3}, left={6}, right={7}, color={4}, height={5}>".format(
                 self.__class__.__name__,
                 id(self),
                 self.key,
                 self.val,
                 'red' if is_red(self) else 'black',
-                self.height
+                self.height,
+                self.left and self.left.key or None,
+                self.right and self.right.key or None,
             )
 
         def _fix_up(self):
