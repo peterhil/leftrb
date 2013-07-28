@@ -194,12 +194,74 @@ class LeftRB(BinarySearchTree, object):
             self.color = RED
             return x
 
+        def _delete(self, key):
+            """
+            Delete a node with the given key (recursively) from the tree below.
+            """
+            assert self.search(key) is not None
+
+            if key < self.key:
+                if is_black(self.left) and self.left and is_black(self.left.left):
+                    self = self._move_red_left()
+                self.left = self.left._delete(key)
+            else:
+                if is_red(self.left):
+                    self = self._rotate_right()
+
+                if key == self.key and self.right is None:
+                    return None
+
+                if is_black(self.right) and self.right and is_black(self.right.left):
+                    self = self._move_red_right()
+
+                if key == self.key:
+                    self.value = self.right.search(self.right.min())
+                    self.key = self.right.min()
+                    self.right = self.right._delete_min()
+                else:
+                    self.right = self.right._delete(key)
+
+            return self._fix_up()
+
+        def _delete_min(self):
+            """
+            Delete the smallest node on the (left) subtree below
+            while maintaining balance.
+            """
+            if self.left is None:
+                return None
+
+            if is_black(self.left) and self.left and is_black(self.left.left):
+                self = self._move_red_left()
+
+            self.left = self.left._delete_min()
+
+            return self._fix_up()
+
+        def _delete_max(self):
+            """
+            Delete the largest node on the (right) subtree below
+            while maintaining balance.
+            """
+            if is_red(self.left):
+                self = self._rotate_right()
+
+            if self.right is None:
+                return None
+
+            if is_black(self.right) and self.right and is_black(self.right.left):
+                self = self._move_red_right()
+
+            self.right = self.right._delete_max()
+
+            return self._fix_up()
+
         def _setHeight(self):
             """
             Update height.
             """
             self.height = 1 + max(self.left and self.left.height or 0,
-                                      self.right and self.right.height or 0)
+                                  self.right and self.right.height or 0)
             return self
 
 
@@ -251,92 +313,31 @@ class LeftRB(BinarySearchTree, object):
         Delete a node with the given key from the tree.
         """
         if key not in self:
-            sys.stderr.write("Tree does not contain key '{0}'.".format(key))
+            sys.stderr.write("Tree does not contain key '{0}'.\n".format(key))
             return False
 
         if is_black(self.root.left) and is_black(self.root.right):
             self.root.color = RED
 
-        self.root = self._delete(self.root, key)
+        if self.root is not None:
+            self.root = self.root._delete(key)
 
         if not self.is_empty():
             self.root.color = BLACK
-
-    def _delete(self, h, key):
-        """
-        Delete a node with the given key (recursively) from the tree below node (h).
-        """
-        assert h.search(key) is not None
-
-        if key < h.key:
-            if is_black(h.left) and h.left and is_black(h.left.left):
-                h = h._move_red_left()
-            h.left = self._delete(h.left, key)
-        else:
-            if is_red(h.left):
-                h = h._rotate_right()
-
-            if key == h.key and h.right is None:
-                return None
-
-            if is_black(h.right) and h.right and is_black(h.right.left):
-                h = h._move_red_right()
-
-            if key == h.key:
-                h.value = h.right.search(h.right.min())
-                h.key = h.right.min()
-                h.right = self._delete_min(h.right)
-            else:
-                h.right = self._delete(h.right, key)
-
-        return h._fix_up()
 
     def delete_min(self):
         """
         Delete the smallest node while maintaining balance.
         """
-        self.root = self._delete_min(self.root)
+        self.root = self.root._delete_min()
         self.root.color = BLACK
-
-    def _delete_min(cls, h):
-        """
-        Delete the smallest node on the (left) subtree below node(h)
-        while maintaining balance.
-        """
-        if h.left is None:
-            return None
-
-        if is_black(h.left) and h.left and is_black(h.left.left):
-            h = h._move_red_left()
-
-        h.left = cls._delete_min(h.left)
-
-        return h._fix_up()
 
     def delete_max(self):
         """
         Delete the largest node while maintaining balance.
         """
-        self.root = self._delete_max(self.root)
+        self.root = self.root._delete_max()
         self.root.color = BLACK
-
-    def _delete_max(cls, h):
-        """
-        Delete the largest node on the (right) subtree below node(h)
-        while maintaining balance.
-        """
-        if is_red(h.left):
-            h = rotateRight(h)
-
-        if h.right is None:
-            return None
-
-        if is_black(h.right) and h.right and is_black(h.right.left):
-            h = h._move_red_right()
-
-        h.right = cls._delete_max(h.right)
-
-        return fixUp(h)
 
 
 del BinarySearchTree
