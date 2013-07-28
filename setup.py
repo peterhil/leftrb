@@ -65,7 +65,7 @@ by Robert Sedgewick in `his paper`_.
     long_description=README_TEXT,
     author='Peter Hillerström',
     author_email='peter.hillerstrom@gmail.com',
-    license='MIT License',
+    license='GNU Lesser General Public License v3 or later (LGPLv3+)',
     url='https://github.com/peterhil/leftrb',
 
     classifiers = [
