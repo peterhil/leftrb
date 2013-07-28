@@ -133,7 +133,7 @@ class LeftRB(BinarySearchTree, object):
 
         def _move_red_left(self):
             """
-            Assuming that h is red and both self.left and self.left.left
+            Assuming that self is red and both self.left and self.left.left
             are black, make self.left or one of its children red.
             """
             self._flip_colors()
