@@ -39,11 +39,11 @@ class TestLeftRB(Base):
         assert len(t) == len(self.items)
 
     def test_height(self):
-        for n in range(16):
+        for n in range(1, 16):
             items = random.sample(range(n), n)
             t = fill_tree(items)
             print("Items: {0}".format(items))
-            assert t.height() <= int(math.ceil(2 * math.log(n + 1, 2)))
+            assert t.height() <= int(2 * math.ceil(math.log(n, 2) + 1))
 
     def test_min(self):
         t = fill_tree(self.items)
