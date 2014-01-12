@@ -50,7 +50,7 @@ def is_black(h):
     """
     Is the node (h) black?
     """
-    return not is_red(h)
+    return isinstance(h, LeftRB.Node) and h.color == BLACK
 
 
 class LeftRB(BinarySearchTree, object):
