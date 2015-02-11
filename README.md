@@ -50,9 +50,9 @@ From Python package index:
 
 or from Github source:  
 
-    git clone https://github.com/peterhil/leftb.git
+    git clone https://github.com/peterhil/leftrb.git
     cd leftrb 
-    python setyp.py install
+    python setup.py install
 
 ## About
 
