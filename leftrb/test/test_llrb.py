@@ -16,7 +16,7 @@ Tree = LeftRB
 
 def fill_tree(items):
     tree = Tree()
-    map(tree.insert, items)
+    list(map(tree.insert, items))
     return tree
 
 
