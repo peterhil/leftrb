@@ -5,3 +5,8 @@ MANIFEST
 leftrb.egg-info/
 .coverage
 .tox/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
